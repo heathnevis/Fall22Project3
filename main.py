@@ -14,27 +14,24 @@ def create_world():# need to change world gen to have rooms (~8) generate with r
     c = Room("You are in room 3")
     d = Room("You are in room 4")
     room_list = [] #list of all rooms being randomly made
-    for i in range(8):
+    for i in range(15):
         new_room = Room()
         room_list.append(new_room)
     for i in room_list: #pick a random room to connect to, repeating twice
-        stall_count = 0 #here to prevent infinite looping by accident
-        for j in range(2):
+        for j in range(3): #makes sure there's at least two exits to each room
+            if len(i.exits) > 3: #checks if there are already enough exits
+                break
             connecting_room = room_list[random.randint(0,7)]
-            while len(connecting_room.exits) >= 4 or connecting_room == i:
+            while len(connecting_room.exits) > 3 or connecting_room == i:
                 connecting_room = room_list[random.randint(0,7)] #ensures that the room to connect to has an available exit
-                stall_count += 1
-                if stall_count > 200:
-                    break
+                
             direction1, direction2 = i.random_direction()
             while direction2 in connecting_room.exits or direction1 in i.exits:
                 direction1, direction2 = i.random_direction()
-                stall_count += 1
-                if stall_count > 200:
-                    break
-            if stall_count > 200:
-                break
             Room.connect_rooms(i, direction1, connecting_room, direction2)
+        if random.random() < 1:
+            mon = Monster("default", -1, i)
+
         
     Room.connect_rooms(a, "east", b, "west")
     Room.connect_rooms(c, "east", d, "west")
@@ -43,9 +40,11 @@ def create_world():# need to change world gen to have rooms (~8) generate with r
     Room.connect_rooms(a, "south",  room_list[0], "north")
 
     i = Item("Rock", "This is just a rock.", 2)
+    k = Item("Rock", "This is just a rock.", 2)
     j = HealingItem("healing potion", "heals 10 hp", 5, 10)
     i.put_in_room(a)
     j.put_in_room(a)
+    k.put_in_room(a)
     player.location = a
     Monster("Bob the monster", 20, a)
 
@@ -76,7 +75,13 @@ def show_help():
     print("go <direction> -- moves you in the given direction")
     print("inventory -- opens your inventory")
     print("pickup <item> -- picks up the item")
+    print("drop <item> -- drops the item")
+    print("dropall <item> -- drops all items of the same name")
+    print("attack <monster name> -- starts combat with monster")
+    print("wait -- just kind of sit there")
+    print("inspect <item> -- prints description and stats of item")
     print("quit -- quits the game")
+    print("use <item> -- uses or equips the item")
     print()
     input("Press enter to continue...")
 
@@ -125,7 +130,7 @@ if __name__ == "__main__":
                         print("No such item.")
                         command_success = False
                 case "dropall":
-                    target_name = command[9:]
+                    target_name = command[8:]
                     player.dropall(target_name)
                 case "inventory":
                     player.show_inventory()
@@ -205,8 +210,5 @@ Total: 23
     player attributes: 3 //could do more with this, but defence/attack counts
 
 Needs work:
-    dropall not working properly
-    more monsters, new classes? (monster that steals an item?)
-    randomize world generation, too many exits(multiple of the same direction showing up)
-        add a check if the current room being considered already has 4 exits, then skip if it does
+    more monsters, new classes? (monster that steals an item?) (beholder final boss with multiple phases)
 '''

@@ -9,6 +9,9 @@ class Room:
         self.exits = []
         self.items = []
     def add_exit(self, exit_name, destination):
+        for temp in self.exits:
+            if temp[0] == exit_name:
+                return
         self.exits.append([exit_name, destination])
     def get_destination(self, direction):
         for e in self.exits:
@@ -65,3 +68,11 @@ class Room:
             case 3: direction = ["south", "north"]
             case 4: direction = ["west", "east"]
         return direction
+
+    '''def __repr__(self): #test repr, makes room's exits easier to see
+        ret = ""
+        for i in self.exits:
+            ret += i[0] + ", "
+        return ret'''
+
+    

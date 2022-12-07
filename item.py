@@ -30,23 +30,23 @@ class Item:
             case 1:
                 return("Glow Stick")
             case 2:
-                return("desc")
+                return("Bracelet")
             case 3:
-                return("desc")
+                return("Pencil")
             case 4:
-                return("desc")
+                return("Small rock")
             case 5:
-                return("desc")
+                return("Bell")
             case 6:
-                return("desc")
+                return("Jar of Bees")
             case 7:
-                return("desc")
+                return("Small lamp")
             case 8:
-                return("desc")
+                return("Dime")
             case 9:
-                return("desc")
+                return("Empty Box")
             case 10:
-                return("desc")
+                return("Piece of paper")
     def random_desc(self, num):
         match num:
             case 1:
@@ -60,17 +60,17 @@ class Item:
                 self.weight -= 1
                 return("It feels hollow")
             case 5:
-                return("desc")
+                return("Runes glow along one side of it")
             case 6:
-                return("desc")
+                return("An intricate design is carved into it")
             case 7:
-                return("desc")
+                return("It feels damp")
             case 8:
-                return("desc")
+                return("It is cold to the touch")
             case 9:
-                return("desc")
+                return("It's weirdly warm")
             case 10:
-                return("desc")
+                return("It's old and worn")
 
 
 #Eventually going to add weapons and armor, which inherit from item
@@ -95,6 +95,31 @@ class Armor(Item): #need to add unique desc/name
         self.desc += f"\nGives {self.defence} defence"
     def use(self):
         print("You put on the armor")
+    def random_name(self, num):
+        match num:
+            case 1:
+                return("Leather Armor")
+            case 2:
+                return("Studded Leather armor")
+            case 3:
+                return("Scale Mail")
+            case 4:
+                return("Chainmail")
+            case 5:
+                return("Breastplate")
+            case 6:
+                self.defence += 2
+                return("Half Plate")
+            case 7:
+                self.defence += 4
+                return("Full Plate")
+            case 8:
+                return("Padded Armor")
+            case 9:
+                self.defence -= 1
+                return("Hide Armor")
+            case 10:
+                return("Splint Mail")
 
 class Weapon(Item):#need to add unique desc/name
     def __init__(self, name = None, desc = None, weight = None, attack_value = None):
@@ -105,3 +130,29 @@ class Weapon(Item):#need to add unique desc/name
         self.desc += f"\nGives {self.attack} attack"
     def use(self):
         print("You switch your weapon")
+
+    def random_name(self, num):
+        match num:
+            case 1:
+                return("Mace")
+            case 2:
+                return("Flail")
+            case 3:
+                return("Dagger")
+            case 4:
+                return("Shortsword")
+            case 5:
+                return("Longsword")
+            case 6:
+                self.attack += 2
+                return("Greatsword")
+            case 7:
+                self.attack += 4
+                return("Really big stick")
+            case 8:
+                return("Hammer")
+            case 9:
+                self.attack -= 1
+                return("Big stick")
+            case 10:
+                return("Rapier")
