@@ -71,8 +71,8 @@ class Player:
             print(mon.name + "'s health is " + str(mon.health) + ".")
             command = input("What do you do? ")
             command_words = command.split()
+            clear()
             match command_words[0].lower():
-                
                 case "attack":
                     mon.health -= self.attack
                     print("You hit the monster")
@@ -92,8 +92,11 @@ class Player:
             self.health -= mon.health
             gold_gained = random.randint(1,20)
             self.gold += gold_gained
-            print("You win. Your health is now " + str(self.health) + ".\n You gained " + str(gold_gained) + " gold.")
-            mon.die()            
+            print("You win. Your health is now " + str(self.health) + ".\nYou gained " + str(gold_gained) + " gold.")
+            mon.die()
+            if mon.name == "Beholder":
+                if mon.phase < 3:
+                    print("\n\nYou have wounded the Beholder, it retreats further into its lair. \nOne more fight will be enough to defeat it and free you.")
         elif run == False:
             print("You lose.")
             self.alive = False
@@ -115,6 +118,9 @@ class Player:
         if item_type is None: #non-usable item
             ''
         elif item_type == "healing": #removes healing item after use
+            if i.name == "Elixer of life":
+                self.defence += 10
+                self.attack += 10
             self.health += i.healing
             self.drop(item_name)
         elif item_type == "weapon": #swaps weapon

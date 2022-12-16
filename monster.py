@@ -9,9 +9,6 @@ class Monster:
         self.health = health
         if self.health == -1:
             self.health = random.randint(1,50)
-            if self.name == "Beholder":
-                self.health = 70
-                self.attack = 15
         self.max_health = self.health
         self.room = room
         room.add_monster(self)
@@ -39,3 +36,21 @@ class Monster:
             case 8: return "Slime"
             case 9: return "Zombie"
             case 10: return "Fire Elemental"
+
+class Boss(Monster):
+    def __init__(self, room):
+        super().__init__("Beholder",100, room)
+        self.attack = 10
+        self.phase = 1
+    def die(self):
+        self.room.remove_monster(self)
+        updater.deregister(self)
+        if self.phase < 3:
+            self.phase += 1
+            self.attack += 5
+            self.health = 150
+            updater.register(self)
+            self.room.add_monster(self)
+
+    
+    

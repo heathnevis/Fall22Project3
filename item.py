@@ -12,7 +12,7 @@ class Item:
         self.weight = weight
         if self.name == None and self.desc == None and self.weight == None:#generating a random item
             self.weight = random.randint(1,7)
-            self.name = self.random_name(random.randint(1,10)) #makes a random description
+            self.name = self.random_item_name(random.randint(1,10)) #makes a random name
             self.desc = self.random_desc(random.randint(1,10)) #makes a random description
     def describe(self):
         clear()
@@ -25,7 +25,7 @@ class Item:
     def use(self):
         print("Nothing happened")
         return None
-    def random_name(self, num):
+    def random_item_name(self, num):
         match num:
             case 1:
                 return("Glow Stick")
@@ -83,7 +83,10 @@ class HealingItem(Item):
             healing_value = random.randint(1,50)
         self.healing = healing_value
     def use(self):
-        print(f"you healed yourself for {self.healing}")
+        if self.name == "Elixer of life":
+            print(f"You healed yourself completely, and feel stronger.")
+        else:
+            print(f"You healed yourself for {self.healing}")
         return "healing"
 
 class Armor(Item): #need to add unique desc/name
@@ -93,9 +96,10 @@ class Armor(Item): #need to add unique desc/name
             defence_value = random.randint(0,20)
         self.defence = defence_value
         self.desc += f"\nGives {self.defence} defence"
+        self.name = self.random_armor_name(random.randint(1,10))
     def use(self):
         print("You put on the armor")
-    def random_name(self, num):
+    def random_armor_name(self, num):
         match num:
             case 1:
                 return("Leather Armor")
@@ -119,19 +123,21 @@ class Armor(Item): #need to add unique desc/name
                 self.defence -= 1
                 return("Hide Armor")
             case 10:
-                return("Splint Mail")
+                self.defence += 8
+                return("Enchanted Armor")
 
 class Weapon(Item):#need to add unique desc/name
     def __init__(self, name = None, desc = None, weight = None, attack_value = None):
         super().__init__(name, desc, weight)
         if attack_value == None:
-            attack_value = random.randint(0,20)
+            attack_value = random.randint(0,15)
         self.attack = attack_value
         self.desc += f"\nGives {self.attack} attack"
+        self.name = self.random_weapon_name(random.randint(1,10))
     def use(self):
         print("You switch your weapon")
 
-    def random_name(self, num):
+    def random_weapon_name(self, num):
         match num:
             case 1:
                 return("Mace")
@@ -155,4 +161,5 @@ class Weapon(Item):#need to add unique desc/name
                 self.attack -= 1
                 return("Big stick")
             case 10:
-                return("Rapier")
+                self.attack += 8
+                return("Enchanted sword")

@@ -1,37 +1,35 @@
 from room import Room
 from player import Player
 from item import Item, HealingItem, Armor, Weapon
-from monster import Monster
+from monster import Monster, Boss
 import os
 import updater
 import random
 
 player = Player()
 
-def create_world():# need to change world gen to have rooms (~8) generate with random connections
+def create_world():
     a = Room("You are in room 1")
     b = Room("You are in room 2")
     c = Room("You are in room 3")
     d = Room("You are in room 4")
     room_list = [] #list of all rooms being randomly made
-    for i in range(15):
+    for i in range(3):
         new_room = Room()
         room_list.append(new_room)
     for i in room_list: #pick a random room to connect to, repeating twice
         for j in range(3): #makes sure there's at least two exits to each room
             if len(i.exits) > 3: #checks if there are already enough exits
                 break
-            connecting_room = room_list[random.randint(0,7)]
-            while len(connecting_room.exits) > 3 or connecting_room == i:
-                connecting_room = room_list[random.randint(0,7)] #ensures that the room to connect to has an available exit
-                
+            for connecting_room in room_list:
+                if len(connecting_room.exits) < 4 and connecting_room != i:#ensures that the room to connect to has an available exit
+                    break
             direction1, direction2 = i.random_direction()
             while direction2 in connecting_room.exits or direction1 in i.exits:
                 direction1, direction2 = i.random_direction()
             Room.connect_rooms(i, direction1, connecting_room, direction2)
-        if random.random() < 1:
-            mon = Monster("default", -1, i)
-
+        if random.random() < 0.7:
+            mon = Monster("default", -1, i)        
         
     Room.connect_rooms(a, "east", b, "west")
     Room.connect_rooms(c, "east", d, "west")
@@ -40,13 +38,13 @@ def create_world():# need to change world gen to have rooms (~8) generate with r
     Room.connect_rooms(a, "south",  room_list[0], "north")
 
     i = Item("Rock", "This is just a rock.", 2)
-    k = Item("Rock", "This is just a rock.", 2)
-    j = HealingItem("healing potion", "heals 10 hp", 5, 10)
+    j = HealingItem("healing potion", "heals 20 hp", 5, 20)
     i.put_in_room(a)
     j.put_in_room(a)
-    k.put_in_room(a)
     player.location = a
     Monster("Bob the monster", 20, a)
+    return room_list
+
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -87,10 +85,15 @@ def show_help():
 
 
 if __name__ == "__main__":
-    create_world()
+    rooms = create_world()
     playing = True
     wait_time = 0
-    while playing and player.alive:
+    total_time = 0 #counter for spawning the boss
+    boss_alive = True
+    boss = None
+    command = input("You have been trapped in a dungeon. It seems that the only way out is to defeat the rule of this dungeon, the Beholder.\nPress enter to continue...")
+    while playing and player.alive and boss_alive:
+        total_time += 1
         print_situation()
         command_success = False
         time_passes = False
@@ -119,6 +122,7 @@ if __name__ == "__main__":
                     target = player.location.get_item_by_name(target_name)
                     if target != False:
                         player.pickup(target)
+                        print("You picked up the", target_name)
                     else:
                         print("No such item.")
                         command_success = False
@@ -138,12 +142,18 @@ if __name__ == "__main__":
                     show_help()
                 case "exit":
                     playing = False
+                case "quit":
+                    playing = False
                 case "attack":
                     target_name = command[7:]
                     target = player.location.get_monster_by_name(target_name)
                     if target != False:
                         player.attack_monster(target)
-                        if random.random() > 0.5: #gives a chance for an item to drop (~50%)
+                        if target.name == "Beholder": #boss defeat behavior
+                            loot = HealingItem("Elixer of life", "The Beholder accidentally dropped this. It feels powerful", 10, 99)
+                            player.location.items.append(loot)
+                            #boss.room = rooms[random.randint(0,length-1)]
+                        elif random.random() > 0.3: #gives a chance for an item to drop (~70%)
                             item_type = random.randint(1,4)
                             if item_type == 1:
                                 loot = Item()
@@ -151,11 +161,10 @@ if __name__ == "__main__":
                                 loot = HealingItem()
                             if item_type == 3:
                                 loot = Weapon()
-                                ''
                             if item_type == 4:
                                 loot = Armor()
-                                ''
                             player.location.items.append(loot)
+                        
                     else:
                         print("No such monster.")
                         command_success = False
@@ -184,12 +193,23 @@ if __name__ == "__main__":
                 case "use":
                     target_name = command[4:]
                     player.use_item(target_name)
+                    show_message = input("Press enter to continue...")
                     
                 case other:
                     print("Not a valid command")
                     command_success = False
         if time_passes == True:
             updater.update_all()
+        if total_time > 20:#spawns boss after a bit
+            length = len(rooms)
+            boss_room = rooms[random.randint(0,length-1)]
+            if boss is None:
+                boss = Boss(boss_room)
+            if boss.phase > 2: #ends the game if the boss is killed
+                boss_alive = False
+            boss.move_to(rooms[random.randint(0,length-1)])
+    if not boss_alive:
+        print("You defeated the Beholder, freeing youself. Congratulations!")
 
 
 
@@ -210,5 +230,7 @@ Total: 23
     player attributes: 3 //could do more with this, but defence/attack counts
 
 Needs work:
-    more monsters, new classes? (monster that steals an item?) (beholder final boss with multiple phases)
+    more monsters, new classes? (monster that steals an item?)
+    work on boss behavior, make it end the game if the second phase is beat
+    single use damage items?
 '''
