@@ -1,0 +1,13 @@
+Improvements:
+drop- added a drop and dropall command so that you can clear up your inventory
+inventory size- added a random weight to each item to limit carrying capacity
+wait- a way to regen and allow time to pass
+regeneration- you naturally regenerate over time, and some items can be used to heal
+inspect- command that gives you the description and stats of an item
+bigger world- added a bunch of room descriptions that are randomly chosen
+random world- randomly generates rooms off of the starting room, while the 4 original rooms are in place
+armor- there's armor that reduces damage taken
+weapons- items that increase damage dealt
+loot- monsters will drop random items
+player attributes- the player has defence and attack, which are modified by equipping weapons and armor
+Victory Condition- A boss spawns after a set amount of time, and after you beat it twice, you win
